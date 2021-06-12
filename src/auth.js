@@ -40,7 +40,7 @@ class SteamAuth {
 			this.relyingParty.verifyAssertion(request, function (error, result) {
 				if (error)
 					reject(new AuthenticationError(error));
-				if (!result.authenticated)
+				else if (!result.authenticated)
 					reject(new AuthenticationError("Not Authenticated!"));
 				else {
 					let regex = result.claimedIdentifier.match(/\/id\/(\d+)/);
