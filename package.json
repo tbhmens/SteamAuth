@@ -1,23 +1,20 @@
 {
-  "author": "Yang Shu",
-  "name": "steam-webapi",
-  "description": "openid auth, web api wrappers",
+  "author": "tbhmens",
+  "name": "steam-auth",
+  "description": "Forked from https://github.com/eagle21st/SteamWebAPI, an easy steam openid wrapper.",
   "version": "0.0.3",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eagle21st/SteamWebAPI.git"
+    "url": "https://github.com/tbhmens/SteamWebAPI.git"
   },
-  "main": "./src/steam.js",
+  "main": "./src/auth.js",
   "keywords": [
     "steam",
     "api",
-    "openid"
+    "openid",
+    "auth"
   ],
   "dependencies": {
-    "request-promise": "~0.4.2",
-    "underscore": "~1.8.3"
-  },
-  "engines": [
-    "node >= v0.10.25"
-  ]
+    "openid": "^2.0.8"
+  }
 }

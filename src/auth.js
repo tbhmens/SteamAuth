@@ -1,57 +1,55 @@
 // login support with openid
-var openid = require('openid'),
-	identifier = 'http://steamcommunity.com/openid';
+const openid = require('openid');
+const identifier = 'https://steamcommunity.com/openid';
 
-function AuthenticationError(message){
-	this.name = "AuthenticationError";
-    this.message = (message || "Authentication Error");
-}
-
-AuthenticationError.prototype = Error.prototype;
-
-function SteamAuth(verify_callback, realm){
-	try{
-		this.relyingParty = new openid.RelyingParty(
-			verify_callback, // Verification URL (yours)
-			realm, // Realm (optional, specifies realm for OpenID authentication)
-			true, // Use stateless verification
-			false, // Strict mode
-			[]); // List of extensions to enable and include
-	}catch(e){
-		throw new AuthenticationError(e);
+class AuthenticationError extends Error {
+	constructor(message) {
+		super(message);
+		this.name = "AuthenticationError";
 	}
 }
 
-SteamAuth.prototype.authenticate = function(req, res){
-	this.relyingParty.authenticate(identifier, false, function(error, authUrl){
-		if (error){
-			throw new AuthenticationError(error);
-		}else if (!authUrl){
-			throw new AuthenticationError('Auth url not defined');
-		}else{
-			res.redirect(authUrl);
-		}
-	});
-};
 
-SteamAuth.prototype.verify = function(req, res, callback){
-	this.relyingParty.verifyAssertion(req, function(error, result){
-		if(error){
-			throw new AuthenticationError(error);
-		}else if(!result.authenticated){
-			var err = new AuthenticationError();
-			throw err;
+class SteamAuth {
+	constructor(verify_callback, realm) {
+		try {
+			this.relyingParty = new openid.RelyingParty(
+				verify_callback, // Verification URL (yours)
+				realm, // Realm (optional, specifies realm for OpenID authentication)
+				true, // Use stateless verification
+				false, // Strict mode
+				[]); // List of extensions to enable and include
+		} catch (e) {
+			throw new AuthenticationError(e);
 		}
-		else{
-			var steamIDURL = result.claimedIdentifier;
-			try{
-				res.locals.steamID = steamIDURL.match(/\/id\/(.*)/)[1];
-				callback && callback(res.locals.steamID);
-			}catch(e){
-				throw new AuthenticationError(e);
-			}
-		}
-	});
-};
+	}
+	getAuthUrl() {
+		return new Promise((resolve, reject) => {
+			this.relyingParty.authenticate(identifier, false, function (error, authUrl) {
+				if (error)
+					reject(new AuthenticationError(error));
+				else if (!authUrl)
+					reject(new AuthenticationError('Auth url not defined'));
+				else
+					resolve(authUrl);
+			});
+		});
+	}
+	verify(request) {
+		return new Promise((resolve, reject) =>
+			this.relyingParty.verifyAssertion(request, function (error, result) {
+				if (error)
+					reject(new AuthenticationError(error));
+				if (result.authenticated)
+					reject(new AuthenticationError("Not Authenticated!"));
+				else {
+					let regex = result.claimedIdentifier.match(/\/id\/(\d+)/);
+					if (regex != null)
+						resolve(regex[1]);
+				}
+			})
+		);
+	}
+}
 
 module.exports = SteamAuth;
