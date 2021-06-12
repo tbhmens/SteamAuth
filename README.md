@@ -2,7 +2,9 @@ Steam Auth
 -------------
 
 # Install
-    npm install @tbhmens/steam-auth --save
+```sh
+npm install @tbhmens/steam-auth --save
+```
 # Usage
 ```js
 const SteamAuth = require("@tbhmens/steam-auth");
