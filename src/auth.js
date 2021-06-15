@@ -1,8 +1,13 @@
-// login support with openid
+/** @module SteamAuth */
 const openid = require('openid');
 const identifier = 'https://steamcommunity.com/openid';
 
+
 class AuthenticationError extends Error {
+	/**
+	 * 
+	 * @param {string} message - Error Message
+	 */
 	constructor(message) {
 		super(message);
 		this.name = "AuthenticationError";
@@ -11,18 +16,27 @@ class AuthenticationError extends Error {
 
 
 class SteamAuth {
+	/**
+	 * 
+	 * @param {string} verify_callback - Verification URL (yours)
+	 * @param {string} realm - Realm (yours)
+	 */
 	constructor(verify_callback, realm) {
 		try {
 			this.relyingParty = new openid.RelyingParty(
-				verify_callback, // Verification URL (yours)
-				realm, // Realm (optional, specifies realm for OpenID authentication)
-				true, // Use stateless verification
-				false, // Strict mode
-				[]); // List of extensions to enable and include
+				verify_callback,
+				realm,
+				true,
+				false,
+				[]);
 		} catch (e) {
 			throw new AuthenticationError(e);
 		}
 	}
+	/**
+	 * 
+	 * @returns {Promise<string>} URL to send end user to
+	 */
 	getAuthUrl() {
 		return new Promise((resolve, reject) => {
 			this.relyingParty.authenticate(identifier, false, function (error, authUrl) {
@@ -35,6 +49,11 @@ class SteamAuth {
 			});
 		});
 	}
+	/**
+	 * 
+	 * @param {Request} request - Request
+	 * @returns {number} - Steam ID
+	 */
 	verify(request) {
 		return new Promise((resolve, reject) =>
 			this.relyingParty.verifyAssertion(request, function (error, result) {
