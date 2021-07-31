@@ -1,4 +1,3 @@
-/** @module SteamAuth */
 const openid = require('openid');
 const identifier = 'https://steamcommunity.com/openid';
 
@@ -22,16 +21,12 @@ class SteamAuth {
 	 * @param {string} realm - Realm (yours)
 	 */
 	constructor(verify_callback, realm) {
-		try {
-			this.relyingParty = new openid.RelyingParty(
-				verify_callback,
-				realm,
-				true,
-				false,
-				[]);
-		} catch (e) {
-			throw new AuthenticationError(e);
-		}
+		this.relyingParty = new openid.RelyingParty(
+			verify_callback,
+			realm,
+			true,
+			false,
+			[]);
 	}
 	/**
 	 * 
@@ -39,7 +34,7 @@ class SteamAuth {
 	 */
 	getAuthUrl() {
 		return new Promise((resolve, reject) => {
-			this.relyingParty.authenticate(identifier, false, function (error, authUrl) {
+			this.relyingParty.authenticate(identifier, false, (error, authUrl) => {
 				if (error)
 					reject(new AuthenticationError(error));
 				else if (!authUrl)
@@ -56,7 +51,7 @@ class SteamAuth {
 	 */
 	verify(request) {
 		return new Promise((resolve, reject) =>
-			this.relyingParty.verifyAssertion(request, function (error, result) {
+			this.relyingParty.verifyAssertion(request, (error, result) => {
 				if (error)
 					reject(new AuthenticationError(error));
 				else if (!result.authenticated)

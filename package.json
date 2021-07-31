@@ -2,7 +2,7 @@
   "author": "tbhmens",
   "name": "@tbhmens/steam-auth",
   "description": "An easy steam openid api. Forked from https://github.com/eagle21st/SteamWebAPI.",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "repository": {
     "type": "git",
     "url": "https://github.com/tbhmens/SteamWebAPI.git"
