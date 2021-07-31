@@ -52,7 +52,7 @@ class SteamAuth {
 	/**
 	 * 
 	 * @param {Request} request - Request
-	 * @returns {number} - Steam ID
+	 * @returns {Promise<number>} - Steam ID
 	 */
 	verify(request) {
 		return new Promise((resolve, reject) =>
